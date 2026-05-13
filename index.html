@@ -279,8 +279,8 @@ function addProduct(){
             let product = {
                 name:name,
                 category:category,
-                stock:stock,
-                price:price,
+                stock: Number(stock),
+                price: Number(price),
                 sold:0,
                 revenue:0,
                 image:imageData
@@ -318,14 +318,17 @@ function addProduct(){
     }
 }
 
-function increaseStock(index){
+function decreaseStock(index){
 
-    products[index].stock =
-    Number(products[index].stock) + 1
+    if(Number(products[index].stock) > 0){
 
-    saveData()
+        products[index].stock =
+        Number(products[index].stock) - 1
 
-    renderProducts()
+        saveData()
+
+        renderProducts()
+    }
 }
 
     products[index].stock++
@@ -543,6 +546,62 @@ document.getElementById("searchInput")?.value.toLowerCase() || ""
 
     document.getElementById("productList").innerHTML = html
 }
+    function deleteSale(index){
+
+    let confirmDelete = confirm(
+        "ลบรายการขายนี้ใช่ไหม?"
+    )
+
+    if(!confirmDelete){
+        return
+    }
+
+    let sale = salesHistory[index]
+
+    let product = products.find(
+        p => p.name === sale.product
+    )
+
+    if(product){
+
+        product.stock =
+        Number(product.stock) + 1
+
+        product.sold =
+        Number(product.sold) - 1
+
+        product.revenue =
+        Number(product.revenue) - Number(sale.price)
+    }
+
+    totalSales =
+    Number(totalSales) - Number(sale.price)
+
+    totalItems =
+    Number(totalItems) - 1
+
+    if(sale.payment === "เงินสด"){
+
+        cashSales =
+        Number(cashSales) - Number(sale.price)
+    }
+
+    if(sale.payment === "เงินโอน"){
+
+        transferSales =
+        Number(transferSales) - Number(sale.price)
+    }
+
+    salesHistory.splice(index,1)
+
+    saveData()
+
+    updateSummary()
+
+    renderProducts()
+
+    renderSalesHistory()
+}
 
 function renderSalesHistory(){
 
@@ -649,6 +708,47 @@ function resetData(){
         localStorage.clear()
 
         location.reload()
+    }
+}
+
+    products = products.map(product => {
+
+    return {
+
+        ...product,
+
+        stock: Number(product.stock),
+
+        price: Number(product.price),
+
+        sold: Number(product.sold || 0),
+
+        revenue: Number(product.revenue || 0)
+    }
+})
+
+saveData()
+
+    function increaseStock(index){
+
+    products[index].stock =
+    Number(products[index].stock) + 1
+
+    saveData()
+
+    renderProducts()
+}
+
+function decreaseStock(index){
+
+    if(Number(products[index].stock) > 0){
+
+        products[index].stock =
+        Number(products[index].stock) - 1
+
+        saveData()
+
+        renderProducts()
     }
 }
 
