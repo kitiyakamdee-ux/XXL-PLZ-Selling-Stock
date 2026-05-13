@@ -320,6 +320,14 @@ function addProduct(){
 
 function increaseStock(index){
 
+    products[index].stock =
+    Number(products[index].stock) + 1
+
+    saveData()
+
+    renderProducts()
+}
+
     products[index].stock++
 
     saveData()
@@ -328,6 +336,17 @@ function increaseStock(index){
 }
 
 function decreaseStock(index){
+
+    if(products[index].stock > 0){
+
+        products[index].stock =
+        Number(products[index].stock) - 1
+
+        saveData()
+
+        renderProducts()
+    }
+}
 
     if(products[index].stock > 0){
 
@@ -646,3 +665,5 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
+
+fix stock number bug
