@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Stock App</title>
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#007AFF">
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#f4f4f4;
+    padding:20px;
+}
+
+h1{
+    color:#333;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.form-card{
+    margin-bottom:20px;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+    margin-bottom:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+    font-size:16px;
+}
+
+button{
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    color:white;
+    cursor:pointer;
+    margin-top:5px;
+    font-size:15px;
+}
+
+.add-btn{
+    background:#007AFF;
+    width:100%;
+}
+
+.cash-btn{
+    background:#34C759;
+}
+
+.transfer-btn{
+    background:#007AFF;
+}
+
+.delete-btn{
+    background:red;
+}
+
+.export-btn{
+    background:green;
+}
+
+.reset-btn{
+    background:gray;
+}
+
+.product-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:15px;
+    margin-top:15px;
+}
+
+.product-image{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.category-title{
+    margin-top:30px;
+    margin-bottom:10px;
+    color:#444;
+}
+
+.stock-low{
+    color:red;
+    font-weight:bold;
+}
+
+.summary{
+    margin-bottom:20px;
+}
+
+.summary p{
+    font-size:18px;
+}
+
+.sale-history{
+    border-bottom:1px solid #ddd;
+    padding:10px 0;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>📦 Stock App</h1>
+
+<div class="card form-card">
+
+<h2>เพิ่ม / เติมสต๊อกสินค้า</h2>
+
+<input type="text" id="name" placeholder="ชื่อสินค้า">
+
+<select id="category">
+    <option>Punch Needle Keychain</option>
+    <option>Punch Needle Rug Mug</option>
+    <option>Punch Needle Hair Clip</option>
+    <option>Punch Needle Magnet</option>
+    <option>Beading</option>
+    <option>Tote Bag</option>
+    <option>Cable tie</option>
+    <option>Shoes Accessories</option>
+    <option>Hair Accessories</option>
+</select>
+
+<input type="number" id="stock" placeholder="จำนวน">
+
+<input type="number" id="price" placeholder="ราคา">
+
+<input type="file" id="image" accept="image/*">
+
+<button class="add-btn" onclick="addProduct()">
+    เพิ่มสินค้า / เติมสต๊อก
+</button>
+
+</div>
+
+<div class="card summary">
+
+<h2>📊 รายงานรายวัน</h2>
+
+<p>ยอดขายรวม: <span id="totalSales">0</span> บาท</p>
+
+<p>เงินสด: <span id="cashSales">0</span> บาท</p>
+
+<p>เงินโอน: <span id="transferSales">0</span> บาท</p>
+
+<p>จำนวนสินค้าที่ขาย: <span id="totalItems">0</span> ชิ้น</p>
+
+<button class="export-btn" onclick="exportCSV()">
+    Export CSV
+</button>
+
+<button class="reset-btn" onclick="resetData()">
+    รีเซ็ตข้อมูล
+</button>
+
+<button class="reset-btn" onclick="clearSalesHistory()">
+    ล้างประวัติการขาย
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>🔍 ค้นหาสินค้า</h2>
+
+<input
+    type="text"
+    id="searchInput"
+    placeholder="ค้นหาสินค้า..."
+    onkeyup="renderProducts()"
+>
+
+</div>
+
+<div id="productList"></div>
+
+<div class="card" style="margin-top:30px;">
+
+<h2>🧾 ประวัติการขาย</h2>
+
+<div id="salesHistory"></div>
+
+</div>
+
+<script>
+
+let products = JSON.parse(localStorage.getItem("products")) || []
+
+let salesHistory = JSON.parse(localStorage.getItem("salesHistory")) || []
+
+let totalSales = Number(localStorage.getItem("totalSales")) || 0
+
+let cashSales = Number(localStorage.getItem("cashSales")) || 0
+
+let transferSales = Number(localStorage.getItem("transferSales")) || 0
+
+let totalItems = Number(localStorage.getItem("totalItems")) || 0
+
+updateSummary()
+renderProducts()
+renderSalesHistory()
+
+function saveData(){
+
+    localStorage.setItem("products", JSON.stringify(products))
+
+    localStorage.setItem("salesHistory", JSON.stringify(salesHistory))
+
+    localStorage.setItem("totalSales", totalSales)
+
+    localStorage.setItem("cashSales", cashSales)
+
+    localStorage.setItem("transferSales", transferSales)
+
+    localStorage.setItem("totalItems", totalItems)
+}
+
+function addProduct(){
+
+    let name = document.getElementById("name").value.trim()
+
+    let category = document.getElementById("category").value
+
+    let stock = Number(document.getElementById("stock").value)
+
+    let price = Number(document.getElementById("price").value)
+
+    let imageInput = document.getElementById("image")
+
+    if(name === "" || stock <= 0 || price <= 0){
+
+        alert("กรอกข้อมูลให้ครบ")
+
+        return
+    }
+
+    let existingProduct = products.find(
+        p => p.name.toLowerCase() === name.toLowerCase()
+    )
+
+    function saveProduct(imageData){
+
+        if(existingProduct){
+
+            existingProduct.stock += stock
+
+            existingProduct.price = price
+
+            if(imageData !== ""){
+                existingProduct.image = imageData
+            }
+
+            alert("เติมสต๊อกสินค้าเรียบร้อย")
+
+        }else{
+
+            let product = {
+                name:name,
+                category:category,
+                stock:stock,
+                price:price,
+                sold:0,
+                revenue:0,
+                image:imageData
+            }
+
+            products.push(product)
+
+            alert("เพิ่มสินค้าใหม่แล้ว")
+        }
+
+        saveData()
+
+        renderProducts()
+
+        document.getElementById("name").value = ""
+        document.getElementById("stock").value = ""
+        document.getElementById("price").value = ""
+        document.getElementById("image").value = ""
+    }
+
+    if(imageInput.files[0]){
+
+        let reader = new FileReader()
+
+        reader.onload = function(e){
+
+            saveProduct(e.target.result)
+        }
+
+        reader.readAsDataURL(imageInput.files[0])
+
+    }else{
+
+        saveProduct("")
+    }
+}
+
+function increaseStock(index){
+
+    products[index].stock++
+
+    saveData()
+
+    renderProducts()
+}
+
+function decreaseStock(index){
+
+    if(products[index].stock > 0){
+
+        products[index].stock--
+
+        saveData()
+
+        renderProducts()
+    }
+}
+
+function sellProduct(index,paymentType){
+
+    let confirmSale = confirm(
+    `ขาย "${products[index].name}" ใช่หรือไม่?`
+)
+
+if(!confirmSale){
+    return
+}
+
+    if(products[index].stock <= 0){
+
+        alert("สินค้าหมด")
+
+        return
+    }
+
+    products[index].stock--
+
+    products[index].sold++
+
+    products[index].revenue += products[index].price
+
+    totalSales += products[index].price
+
+    totalItems++
+
+    if(paymentType === "cash"){
+
+        cashSales += products[index].price
+
+    }else{
+
+        transferSales += products[index].price
+    }
+
+    let now = new Date()
+
+    let sale = {
+        product: products[index].name,
+        price: products[index].price,
+        payment: paymentType,
+        date: now.toLocaleDateString(),
+        time: now.toLocaleTimeString()
+    }
+
+    salesHistory.unshift(sale)
+
+    saveData()
+
+    updateSummary()
+
+    renderProducts()
+
+    renderSalesHistory()
+}
+
+function updateSummary(){
+
+    document.getElementById("totalSales").innerText = totalSales
+
+    document.getElementById("cashSales").innerText = cashSales
+
+    document.getElementById("transferSales").innerText = transferSales
+
+    document.getElementById("totalItems").innerText = totalItems
+}
+
+function editPrice(index){
+
+    let newPrice = prompt(
+        "ใส่ราคาใหม่",
+        products[index].price
+    )
+
+    if(newPrice !== null && newPrice !== ""){
+
+        products[index].price = Number(newPrice)
+
+        saveData()
+
+        renderProducts()
+    }
+}
+
+function deleteProduct(index){
+
+    let confirmDelete = confirm("ลบสินค้านี้ใช่ไหม?")
+
+    if(confirmDelete){
+
+        products.splice(index,1)
+
+        saveData()
+
+        renderProducts()
+    }
+}
+
+function renderProducts(){
+
+    let search =
+document.getElementById("searchInput")?.value.toLowerCase() || ""
+
+    let html = ""
+
+    let categories = [...new Set(products.map(p => p.category))]
+
+    categories.forEach(category => {
+
+        html += `
+        <h2 class="category-title">${category}</h2>
+
+        <div class="product-grid">
+        `
+
+        products.forEach((product,index)=>{
+
+            if(
+    product.category === category &&
+    product.name.toLowerCase().includes(search)
+){
+
+                html += `
+                <div class="card">
+
+                    ${product.image ? `
+                    <img src="${product.image}" class="product-image">
+                    ` : ""}
+
+                    <h3>${product.name}</h3>
+
+                    <p class="${product.stock <= 3 ? 'stock-low' : ''}">
+                        คงเหลือ ${product.stock} ชิ้น
+                    </p>
+
+                    <p>ราคา ${product.price} บาท
+                    </p>
+
+                    <button onclick="editPrice(${index})">
+                        ✏️ แก้ราคา
+                    </button>
+                    
+                    <div style="margin-bottom:10px;">
+
+                    <button onclick="decreaseStock(${index})">
+                        ➖
+                    </button>
+
+                    <button onclick="increaseStock(${index})">
+                        ➕
+                    </button>
+
+                    </div>
+
+                    <p>ขายแล้ว ${product.sold} ชิ้น</p>
+
+                    <p>รายได้ ${product.revenue} บาท</p>
+
+                    <button class="cash-btn"
+                        onclick="sellProduct(${index}, 'cash')">
+                        💵 เงินสด
+                    </button>
+
+                    <button class="transfer-btn"
+                        onclick="sellProduct(${index}, 'transfer')">
+                        📱 เงินโอน
+                    </button>
+
+                    <button class="delete-btn"
+                        onclick="deleteProduct(${index})">
+                        🗑️ ลบ
+                    </button>
+
+                </div>
+                `
+            }
+
+        })
+
+        html += `</div>`
+    })
+
+    document.getElementById("productList").innerHTML = html
+}
+
+function renderSalesHistory(){
+
+    let html = ""
+
+    salesHistory.forEach(sale => {
+
+        html += `
+        <div class="sale-history">
+
+            <strong>${sale.product}</strong><br>
+
+            ราคา ${sale.price} บาท<br>
+
+            ชำระ: ${sale.payment}<br>
+
+            วันที่: ${sale.date}<br>
+
+            เวลา: ${sale.time}
+
+        </div>
+        `
+    })
+
+    document.getElementById("salesHistory").innerHTML = html
+}
+
+function exportCSV(){
+
+    let csv =
+`ชื่อสินค้า,หมวดหมู่,คงเหลือ,ราคา,ขายได้,รายได้\n`
+
+    products.forEach(product => {
+
+        csv += `${product.name},${product.category},${product.stock},${product.price},${product.sold},${product.revenue}\n`
+    })
+
+    csv += `\n`
+
+    csv += `สินค้า,ราคา,การชำระเงิน,วันที่,เวลา\n`
+
+    salesHistory.forEach(sale => {
+
+        csv += `${sale.product},${sale.price},${sale.payment},${sale.date},${sale.time}\n`
+    })
+
+    let blob = new Blob(
+        [csv],
+        { type: 'text/csv;charset=utf-8;' }
+    )
+
+    let link = document.createElement("a")
+
+    link.href = URL.createObjectURL(blob)
+
+    link.download = "stock-report.csv"
+
+    link.click()
+}
+
+function clearSalesHistory(){
+
+    let confirmClear = confirm(
+        "ล้างประวัติการขายทั้งหมดใช่ไหม?"
+    )
+
+    if(confirmClear){
+
+        salesHistory = []
+
+        totalSales = 0
+
+        cashSales = 0
+
+        transferSales = 0
+
+        totalItems = 0
+
+        products.forEach(product => {
+
+            product.sold = 0
+
+            product.revenue = 0
+        })
+
+        saveData()
+
+        updateSummary()
+
+        renderProducts()
+
+        renderSalesHistory()
+
+        alert("ล้างประวัติการขายแล้ว")
+    }
+}
+
+function resetData(){
+
+    let confirmReset = confirm("ล้างข้อมูลทั้งหมดใช่ไหม?")
+
+    if(confirmReset){
+
+        localStorage.clear()
+
+        location.reload()
+    }
+}
+
+</script>
+
+<script>
+
+if("serviceWorker" in navigator){
+
+    navigator.serviceWorker.register("service-worker.js")
+}
+
+</script>
+
+</body>
+</html>
