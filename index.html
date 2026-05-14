@@ -170,6 +170,10 @@ button{
 <button class="export-btn" onclick="exportCSV()">
     Export CSV
 </button>
+    
+<button class="export-btn" onclick="exportBackup()">
+    Backup ข้อมูล
+</button>
 
 <button class="reset-btn" onclick="resetData()">
     รีเซ็ตข้อมูล
@@ -178,6 +182,13 @@ button{
 <button class="reset-btn" onclick="clearSalesHistory()">
     ล้างประวัติการขาย
 </button>
+
+    <input
+type="file"
+id="importBackup"
+accept=".json"
+onchange="importBackup(event)"
+>
 
 </div>
 
@@ -753,6 +764,72 @@ saveData()
 if("serviceWorker" in navigator){
 
     navigator.serviceWorker.register("service-worker.js")
+}
+    
+    function exportBackup(){
+
+    let backupData = {
+
+        products,
+        salesHistory,
+        totalSales,
+        cashSales,
+        transferSales,
+        totalItems
+    }
+
+    let blob = new Blob(
+        [JSON.stringify(backupData)],
+        { type: "application/json" }
+    )
+
+    let link = document.createElement("a")
+
+    link.href = URL.createObjectURL(blob)
+
+    link.download = "stock-backup.json"
+
+    link.click()
+
+    alert("Backup สำเร็จ")
+}
+
+    function importBackup(event){
+
+    let file = event.target.files[0]
+
+    if(!file) return
+
+    let reader = new FileReader()
+
+    reader.onload = function(e){
+
+        let data = JSON.parse(e.target.result)
+
+        products = data.products || []
+
+        salesHistory = data.salesHistory || []
+
+        totalSales = data.totalSales || 0
+
+        cashSales = data.cashSales || 0
+
+        transferSales = data.transferSales || 0
+
+        totalItems = data.totalItems || 0
+
+        saveData()
+
+        updateSummary()
+
+        renderProducts()
+
+        renderSalesHistory()
+
+        alert("กู้ข้อมูลสำเร็จ")
+    }
+
+    reader.readAsText(file)
 }
 
 </script>
