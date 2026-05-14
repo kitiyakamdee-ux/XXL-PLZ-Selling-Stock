@@ -760,51 +760,30 @@ if("serviceWorker" in navigator){
     
 function exportBackup(){
 
-    alert("เริ่ม Backup")
+    let backupData = {
 
-    try{
-
-        let backupData = {
-
-            products,
-            salesHistory,
-            totalSales,
-            cashSales,
-            transferSales,
-            totalItems
-        }
-
-        let jsonData =
-        JSON.stringify(backupData, null, 2)
-
-        let blob = new Blob(
-            [jsonData],
-            { type: "application/json" }
-        )
-
-        let link =
-        document.createElement("a")
-
-        link.href =
-        URL.createObjectURL(blob)
-
-        link.download =
-        "stock-backup.json"
-
-        document.body.appendChild(link)
-
-        link.click()
-
-        document.body.removeChild(link)
-
-        alert("Backup สำเร็จ 🎉")
-
-    }catch(error){
-
-        console.log(error)
-
-        alert("Backup ไม่สำเร็จ")
+        products,
+        salesHistory,
+        totalSales,
+        cashSales,
+        transferSales,
+        totalItems
     }
+
+    let blob = new Blob(
+        [JSON.stringify(backupData)],
+        { type: "application/json" }
+    )
+
+    let link = document.createElement("a")
+
+    link.href = URL.createObjectURL(blob)
+
+    link.download = "stock-backup.json"
+
+    link.click()
+
+    alert("Backup สำเร็จ")
 }
 
 async function importBackup(){
