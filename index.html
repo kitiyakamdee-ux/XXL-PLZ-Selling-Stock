@@ -805,57 +805,55 @@ function exportBackup(){
     }
 }
 
-function importBackup(){
+async function importBackup(){
 
-    let fileInput =
-    document.getElementById("importFile")
+    try{
 
-    let file = fileInput.files[0]
+        let fileInput =
+        document.getElementById("importFile")
 
-    if(!file){
+        let file = fileInput.files[0]
 
-        alert("กรุณาเลือกไฟล์ Backup")
+        if(!file){
 
-        return
-    }
+            alert("กรุณาเลือกไฟล์ Backup")
 
-    let reader = new FileReader()
-
-    reader.onload = function(e){
-
-        try{
-
-            let data = JSON.parse(e.target.result)
-
-            products = data.products || []
-
-            salesHistory = data.salesHistory || []
-
-            totalSales = data.totalSales || 0
-
-            cashSales = data.cashSales || 0
-
-            transferSales = data.transferSales || 0
-
-            totalItems = data.totalItems || 0
-
-            saveData()
-
-            updateSummary()
-
-            renderProducts()
-
-            renderSalesHistory()
-
-            alert("กู้ข้อมูลสำเร็จ 🎉")
-
-        }catch(error){
-
-            console.log(error)
-
-            alert("ไฟล์ Backup เสีย หรืออ่านไม่ได้")
+            return
         }
+
+        let text = await file.text()
+
+        let data = JSON.parse(text)
+
+        products = data.products || []
+
+        salesHistory = data.salesHistory || []
+
+        totalSales = data.totalSales || 0
+
+        cashSales = data.cashSales || 0
+
+        transferSales = data.transferSales || 0
+
+        totalItems = data.totalItems || 0
+
+        saveData()
+
+        updateSummary()
+
+        renderProducts()
+
+        renderSalesHistory()
+
+        alert("กู้ข้อมูลสำเร็จ 🎉")
+
+    }catch(error){
+
+        console.log(error)
+
+        alert("ไฟล์ Backup เสีย หรือ iPad อ่านไฟล์ไม่ได้")
     }
+}
 
     reader.onerror = function(){
 
