@@ -452,7 +452,13 @@ document.getElementById("searchInput")?.value.toLowerCase() || ""
 
     let html = ""
 
-    let categories = [...new Set(products.map(p => p.category))]
+    let categories = [
+    ...new Set(
+        products
+        .filter(p => p.category)
+        .map(p => p.category)
+    )
+]
 
     categories.forEach(category => {
 
@@ -466,7 +472,9 @@ document.getElementById("searchInput")?.value.toLowerCase() || ""
 
             if(
     product.category === category &&
-    product.name.toLowerCase().includes(search)
+    (product.name || "")
+        .toLowerCase()
+        .includes(search)
 ){
 
                 html += `
@@ -697,6 +705,24 @@ function resetData(){
 }
 
     products = products.map(product => {
+
+    return {
+
+        name: product.name || "ไม่มีชื่อ",
+
+        category: product.category || "อื่นๆ",
+
+        stock: Number(product.stock || 0),
+
+        price: Number(product.price || 0),
+
+        sold: Number(product.sold || 0),
+
+        revenue: Number(product.revenue || 0),
+
+        image: product.image || ""
+    }
+})
 
     return {
 
