@@ -573,13 +573,13 @@ document.getElementById("searchInput")?.value.toLowerCase() || ""
     totalItems =
     Number(totalItems) - 1
 
-    if(sale.payment === "เงินสด"){
+    if(sale.payment === "cash"){
 
         cashSales =
         Number(cashSales) - Number(sale.price)
     }
 
-    if(sale.payment === "เงินโอน"){
+    if(sale.payment === "transfer"){
 
         transferSales =
         Number(transferSales) - Number(sale.price)
@@ -600,7 +600,7 @@ function renderSalesHistory(){
 
     let html = ""
 
-    salesHistory.forEach(sale => {
+    salesHistory.forEach((sale,index) => {
 
         html += `
         <div class="sale-history">
@@ -612,10 +612,15 @@ function renderSalesHistory(){
             ชำระ: ${sale.payment}<br>
 
             วันที่: ${sale.date}<br>
+        
+            เวลา: ${sale.time}<br>
 
-            เวลา: ${sale.time}
+            <button class="delete-btn"
+            onclick="deleteSale(${index})">
+            🗑️ ลบรายการนี้
+    </button>
 
-        </div>
+</div>
         `
     })
 
