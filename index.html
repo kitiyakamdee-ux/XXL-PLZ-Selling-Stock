@@ -318,20 +318,10 @@ function addProduct(){
     }
 }
 
-function decreaseStock(index){
+function increaseStock(index){
 
-    if(Number(products[index].stock) > 0){
-
-        products[index].stock =
-        Number(products[index].stock) - 1
-
-        saveData()
-
-        renderProducts()
-    }
-}
-
-    products[index].stock++
+    products[index].stock =
+    Number(products[index].stock) + 1
 
     saveData()
 
@@ -340,20 +330,10 @@ function decreaseStock(index){
 
 function decreaseStock(index){
 
-    if(products[index].stock > 0){
+    if(Number(products[index].stock) > 0){
 
         products[index].stock =
         Number(products[index].stock) - 1
-
-        saveData()
-
-        renderProducts()
-    }
-}
-
-    if(products[index].stock > 0){
-
-        products[index].stock--
 
         saveData()
 
@@ -378,11 +358,15 @@ if(!confirmSale){
         return
     }
 
-    products[index].stock--
+    products[index].stock =
+    Number(products[index].stock) - 1
 
-    products[index].sold++
+    products[index].sold =
+    Number(products[index].sold) + 1
 
-    products[index].revenue += products[index].price
+    products[index].revenue =
+    Number(products[index].revenue)
+    + Number(products[index].price)
 
     totalSales += products[index].price
 
