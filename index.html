@@ -264,7 +264,8 @@ function addProduct(){
 
         if(existingProduct){
 
-            existingProduct.stock += stock
+            existingProduct.stock =
+            Number(existingProduct.stock) + Number(stock)
 
             existingProduct.price = price
 
@@ -713,28 +714,6 @@ function resetData(){
 
 saveData()
 
-    function increaseStock(index){
-
-    products[index].stock =
-    Number(products[index].stock) + 1
-
-    saveData()
-
-    renderProducts()
-}
-
-function decreaseStock(index){
-
-    if(Number(products[index].stock) > 0){
-
-        products[index].stock =
-        Number(products[index].stock) - 1
-
-        saveData()
-
-        renderProducts()
-    }
-}
 
 </script>
 
@@ -750,4 +729,4 @@ if("serviceWorker" in navigator){
 </body>
 </html>
 
-fix stock number bug
+
