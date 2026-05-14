@@ -804,29 +804,43 @@ function importBackup(){
 
     reader.onload = function(e){
 
-        let data = JSON.parse(e.target.result)
+        try{
 
-        products = data.products || []
+            let data = JSON.parse(e.target.result)
 
-        salesHistory = data.salesHistory || []
+            products = data.products || []
 
-        totalSales = data.totalSales || 0
+            salesHistory = data.salesHistory || []
 
-        cashSales = data.cashSales || 0
+            totalSales = data.totalSales || 0
 
-        transferSales = data.transferSales || 0
+            cashSales = data.cashSales || 0
 
-        totalItems = data.totalItems || 0
+            transferSales = data.transferSales || 0
 
-        saveData()
+            totalItems = data.totalItems || 0
 
-        updateSummary()
+            saveData()
 
-        renderProducts()
+            updateSummary()
 
-        renderSalesHistory()
+            renderProducts()
 
-        alert("กู้ข้อมูลสำเร็จ 🎉")
+            renderSalesHistory()
+
+            alert("กู้ข้อมูลสำเร็จ 🎉")
+
+        }catch(error){
+
+            console.log(error)
+
+            alert("ไฟล์ Backup เสีย หรืออ่านไม่ได้")
+        }
+    }
+
+    reader.onerror = function(){
+
+        alert("เปิดไฟล์ไม่ได้")
     }
 
     reader.readAsText(file)
