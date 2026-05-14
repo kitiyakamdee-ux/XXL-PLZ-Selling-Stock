@@ -758,32 +758,51 @@ if("serviceWorker" in navigator){
     navigator.serviceWorker.register("service-worker.js")
 }
     
-    function exportBackup(){
+function exportBackup(){
 
-    let backupData = {
+    try{
 
-        products,
-        salesHistory,
-        totalSales,
-        cashSales,
-        transferSales,
-        totalItems
+        let backupData = {
+
+            products,
+            salesHistory,
+            totalSales,
+            cashSales,
+            transferSales,
+            totalItems
+        }
+
+        let jsonData =
+        JSON.stringify(backupData, null, 2)
+
+        let blob = new Blob(
+            [jsonData],
+            { type: "application/json" }
+        )
+
+        let link =
+        document.createElement("a")
+
+        link.href =
+        URL.createObjectURL(blob)
+
+        link.download =
+        "stock-backup.json"
+
+        document.body.appendChild(link)
+
+        link.click()
+
+        document.body.removeChild(link)
+
+        alert("Backup สำเร็จ 🎉")
+
+    }catch(error){
+
+        console.log(error)
+
+        alert("Backup ไม่สำเร็จ")
     }
-
-    let blob = new Blob(
-        [JSON.stringify(backupData)],
-        { type: "application/json" }
-    )
-
-    let link = document.createElement("a")
-
-    link.href = URL.createObjectURL(blob)
-
-    link.download = "stock-backup.json"
-
-    link.click()
-
-    alert("Backup สำเร็จ")
 }
 
 function importBackup(){
