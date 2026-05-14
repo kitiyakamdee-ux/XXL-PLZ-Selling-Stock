@@ -183,12 +183,17 @@ button{
     ล้างประวัติการขาย
 </button>
 
-    <input
+<p>📥 กู้ข้อมูล Backup</p>
+
+<input
 type="file"
 id="importFile"
 accept=".json"
-onchange="importBackup(event)"
 >
+
+<button class="export-btn" onclick="importBackup()">
+    Import Backup
+</button>
 
 </div>
 
@@ -781,11 +786,19 @@ if("serviceWorker" in navigator){
     alert("Backup สำเร็จ")
 }
 
-    function importBackup(event){
+function importBackup(){
 
-    let file = event.target.files[0]
+    let fileInput =
+    document.getElementById("importFile")
 
-    if(!file) return
+    let file = fileInput.files[0]
+
+    if(!file){
+
+        alert("กรุณาเลือกไฟล์ Backup")
+
+        return
+    }
 
     let reader = new FileReader()
 
@@ -813,7 +826,7 @@ if("serviceWorker" in navigator){
 
         renderSalesHistory()
 
-        alert("กู้ข้อมูลสำเร็จ")
+        alert("กู้ข้อมูลสำเร็จ 🎉")
     }
 
     reader.readAsText(file)
