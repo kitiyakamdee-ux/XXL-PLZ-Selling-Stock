@@ -147,8 +147,6 @@ button{
 
 <input type="number" id="price" placeholder="ราคา">
 
-<input type="file" id="image" accept="image/*">
-
 <button class="add-btn" onclick="addProduct()">
     เพิ่มสินค้า / เติมสต๊อก
 </button>
@@ -263,8 +261,6 @@ function addProduct(){
 
     let price = Number(document.getElementById("price").value)
 
-    let imageInput = document.getElementById("image")
-
     if(name === "" || stock <= 0 || price <= 0){
 
         alert("กรอกข้อมูลให้ครบ")
@@ -299,8 +295,7 @@ function addProduct(){
                 stock: Number(stock),
                 price: Number(price),
                 sold:0,
-                revenue:0,
-                image:imageData
+                revenue:0
             }
 
             products.push(product)
@@ -318,22 +313,6 @@ function addProduct(){
         document.getElementById("image").value = ""
     }
 
-    if(imageInput.files[0]){
-
-        let reader = new FileReader()
-
-        reader.onload = function(e){
-
-            saveProduct(e.target.result)
-        }
-
-        reader.readAsDataURL(imageInput.files[0])
-
-    }else{
-
-        saveProduct("")
-    }
-}
 
 function increaseStock(index){
 
@@ -495,10 +474,6 @@ document.getElementById("searchInput")?.value.toLowerCase() || ""
 
                 html += `
                 <div class="card">
-
-                    ${product.image ? `
-                    <img src="${product.image}" class="product-image">
-                    ` : ""}
 
                     <h3>${product.name}</h3>
 
