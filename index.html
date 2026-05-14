@@ -760,8 +760,6 @@ if("serviceWorker" in navigator){
     
 function exportBackup(){
 
-    alert("เริ่ม Backup")
-
     try{
 
         let backupData = {
@@ -775,27 +773,17 @@ function exportBackup(){
         }
 
         let jsonData =
-        JSON.stringify(backupData, null, 2)
+        JSON.stringify(backupData)
 
         let blob = new Blob(
             [jsonData],
-            { type: "application/json" }
+            { type: "application/json;charset=utf-8" }
         )
 
-        let link =
-        document.createElement("a")
-
-        link.href =
+        let url =
         URL.createObjectURL(blob)
 
-        link.download =
-        "stock-backup.json"
-
-        document.body.appendChild(link)
-
-        link.click()
-
-        document.body.removeChild(link)
+        window.open(url)
 
         alert("Backup สำเร็จ 🎉")
 
