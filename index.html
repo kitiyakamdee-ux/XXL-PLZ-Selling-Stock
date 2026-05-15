@@ -758,91 +758,74 @@ if("serviceWorker" in navigator){
     navigator.serviceWorker.register("service-worker.js")
 }
     
-function exportBackup(){
+async function importBackup(){
 
     try{
 
-        let cleanProducts = products.map(product => {
+        let fileInput =
+        document.getElementById("importFile")
 
-            return {
+        if(!fileInput.files.length){
 
-                name: product.name || "",
+            alert("กรุณาเลือกไฟล์ Backup")
 
-                category: product.category || "",
-
-                stock: Number(product.stock || 0),
-
-                price: Number(product.price || 0),
-
-                sold: Number(product.sold || 0),
-
-                revenue: Number(product.revenue || 0)
-
-            }
-        })
-
-        let backupData = {
-
-            products: cleanProducts,
-
-            salesHistory,
-
-            totalSales,
-
-            cashSales,
-
-            transferSales,
-
-            totalItems
+            return
         }
 
-        let jsonData =
-        JSON.stringify(backupData)
+        let file = fileInput.files[0]
 
-        let blob = new Blob(
-            [jsonData],
-            {
-                type:
-                "application/json;charset=utf-8"
-            }
-        )
+        let text =
+        await file.text()
 
-        let url =
-        URL.createObjectURL(blob)
+        if(!text){
 
-        let isIOS =
-        /iPad|iPhone|iPod/.test(
-            navigator.userAgent
-        )
+            alert("ไฟล์ว่าง")
 
-        if(isIOS){
-
-            window.open(url)
-
-        }else{
-
-            let link =
-            document.createElement("a")
-
-            link.href = url
-
-            link.download =
-            "stock-backup.json"
-
-            document.body.appendChild(link)
-
-            link.click()
-
-            document.body.removeChild(link)
+            return
         }
 
-        alert("Backup สำเร็จ 🎉")
+        let data =
+        JSON.parse(text)
+
+        products =
+        Array.isArray(data.products)
+        ? data.products
+        : []
+
+        salesHistory =
+        Array.isArray(data.salesHistory)
+        ? data.salesHistory
+        : []
+
+        totalSales =
+        Number(data.totalSales || 0)
+
+        cashSales =
+        Number(data.cashSales || 0)
+
+        transferSales =
+        Number(data.transferSales || 0)
+
+        totalItems =
+        Number(data.totalItems || 0)
+
+        saveData()
+
+        updateSummary()
+
+        renderProducts()
+
+        renderSalesHistory()
+
+        alert("กู้ข้อมูลสำเร็จ 🎉")
 
     }catch(error){
 
         console.log(error)
 
-        alert("Backup ไม่สำเร็จ")
+        alert(
+            "Import ไม่สำเร็จ หรือไฟล์เสีย"
+        )
     }
 }
 
