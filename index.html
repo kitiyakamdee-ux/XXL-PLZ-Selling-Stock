@@ -488,13 +488,6 @@ function renderProducts(){
             ✏️
             </button>
 
-            <button
-            class="icon-btn"
-            onclick="editPrice(${index})"
-            >
-            💰
-            </button>
-
             </td>
 
             <td class="${
@@ -526,11 +519,10 @@ function renderProducts(){
             ${product.price} บาท
 
             <button
-            class="edit-btn action-btn"
-            onclick="editPrice(${index})">
-
-            แก้ราคาสินค้า
-
+            class="icon-btn"
+            onclick="editPrice(${index})"
+            >
+            💰
             </button>
 
             </td>
@@ -549,7 +541,7 @@ function renderProducts(){
             class="cash-btn"
             onclick="sellProduct(${index},'cash')">
 
-            เงินสด
+            💵 เงินสด
 
             </button>
 
@@ -557,7 +549,7 @@ function renderProducts(){
             class="transfer-btn"
             onclick="sellProduct(${index},'transfer')">
 
-            เงินโอน
+            📱 เงินโอน
 
             </button>
 
@@ -565,7 +557,7 @@ function renderProducts(){
             class="delete-btn"
             onclick="deleteProduct(${index})">
 
-            ลบสินค้า
+            🗑️ ลบสินค้า
 
             </button>
 
