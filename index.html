@@ -6,10 +6,6 @@
 
 <title>Stock App</title>
 
-<link rel="manifest" href="manifest.json">
-
-<meta name="theme-color" content="#007AFF">
-
 <style>
 
 body{
@@ -27,9 +23,6 @@ h1{
     padding:15px;
     border-radius:12px;
     box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-
-.form-card{
     margin-bottom:20px;
 }
 
@@ -83,34 +76,11 @@ button{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
     gap:15px;
-    margin-top:15px;
-}
-
-.product-image{
-    width:100%;
-    height:180px;
-    object-fit:cover;
-    border-radius:10px;
-    margin-bottom:10px;
-}
-
-.category-title{
-    margin-top:30px;
-    margin-bottom:10px;
-    color:#444;
 }
 
 .stock-low{
     color:red;
     font-weight:bold;
-}
-
-.summary{
-    margin-bottom:20px;
-}
-
-.summary p{
-    font-size:18px;
 }
 
 .sale-history{
@@ -125,7 +95,7 @@ button{
 
 <h1>📦 Stock App</h1>
 
-<div class="card form-card">
+<div class="card">
 
 <h2>เพิ่ม / เติมสต๊อกสินค้า</h2>
 
@@ -147,15 +117,13 @@ button{
 
 <input type="number" id="price" placeholder="ราคา">
 
-<input type="file" id="image" accept="image/*">
-
 <button class="add-btn" onclick="addProduct()">
-    เพิ่มสินค้า / เติมสต๊อก
+เพิ่มสินค้า / เติมสต๊อก
 </button>
 
 </div>
 
-<div class="card summary">
+<div class="card">
 
 <h2>📊 รายงานรายวัน</h2>
 
@@ -168,31 +136,27 @@ button{
 <p>จำนวนสินค้าที่ขาย: <span id="totalItems">0</span> ชิ้น</p>
 
 <button class="export-btn" onclick="exportCSV()">
-    Export CSV
+Export CSV
 </button>
-    
+
 <button class="export-btn" onclick="exportBackup()">
-    Backup ข้อมูล
+Backup ข้อมูล
 </button>
 
 <button class="reset-btn" onclick="resetData()">
-    รีเซ็ตข้อมูล
+รีเซ็ตข้อมูล
 </button>
 
 <button class="reset-btn" onclick="clearSalesHistory()">
-    ล้างประวัติการขาย
+ล้างประวัติการขาย
 </button>
 
 <p>📥 กู้ข้อมูล Backup</p>
 
-<input
-type="file"
-id="importFile"
-accept=".json"
->
+<input type="file" id="importFile" accept=".json">
 
 <button class="export-btn" onclick="importBackup()">
-    Import Backup
+Import Backup
 </button>
 
 </div>
@@ -202,17 +166,17 @@ accept=".json"
 <h2>🔍 ค้นหาสินค้า</h2>
 
 <input
-    type="text"
-    id="searchInput"
-    placeholder="ค้นหาสินค้า..."
-    onkeyup="renderProducts()"
+type="text"
+id="searchInput"
+placeholder="ค้นหาสินค้า..."
+onkeyup="renderProducts()"
 >
 
 </div>
 
 <div id="productList"></div>
 
-<div class="card" style="margin-top:30px;">
+<div class="card">
 
 <h2>🧾 ประวัติการขาย</h2>
 
@@ -222,17 +186,23 @@ accept=".json"
 
 <script>
 
-let products = JSON.parse(localStorage.getItem("products")) || []
+let products =
+JSON.parse(localStorage.getItem("products")) || []
 
-let salesHistory = JSON.parse(localStorage.getItem("salesHistory")) || []
+let salesHistory =
+JSON.parse(localStorage.getItem("salesHistory")) || []
 
-let totalSales = Number(localStorage.getItem("totalSales")) || 0
+let totalSales =
+Number(localStorage.getItem("totalSales")) || 0
 
-let cashSales = Number(localStorage.getItem("cashSales")) || 0
+let cashSales =
+Number(localStorage.getItem("cashSales")) || 0
 
-let transferSales = Number(localStorage.getItem("transferSales")) || 0
+let transferSales =
+Number(localStorage.getItem("transferSales")) || 0
 
-let totalItems = Number(localStorage.getItem("totalItems")) || 0
+let totalItems =
+Number(localStorage.getItem("totalItems")) || 0
 
 updateSummary()
 renderProducts()
@@ -240,30 +210,50 @@ renderSalesHistory()
 
 function saveData(){
 
-    localStorage.setItem("products", JSON.stringify(products))
+    localStorage.setItem(
+        "products",
+        JSON.stringify(products)
+    )
 
-    localStorage.setItem("salesHistory", JSON.stringify(salesHistory))
+    localStorage.setItem(
+        "salesHistory",
+        JSON.stringify(salesHistory)
+    )
 
-    localStorage.setItem("totalSales", totalSales)
+    localStorage.setItem(
+        "totalSales",
+        totalSales
+    )
 
-    localStorage.setItem("cashSales", cashSales)
+    localStorage.setItem(
+        "cashSales",
+        cashSales
+    )
 
-    localStorage.setItem("transferSales", transferSales)
+    localStorage.setItem(
+        "transferSales",
+        transferSales
+    )
 
-    localStorage.setItem("totalItems", totalItems)
+    localStorage.setItem(
+        "totalItems",
+        totalItems
+    )
 }
 
 function addProduct(){
 
-    let name = document.getElementById("name").value.trim()
+    let name =
+    document.getElementById("name").value.trim()
 
-    let category = document.getElementById("category").value
+    let category =
+    document.getElementById("category").value
 
-    let stock = Number(document.getElementById("stock").value)
+    let stock =
+    Number(document.getElementById("stock").value)
 
-    let price = Number(document.getElementById("price").value)
-
-    let imageInput = document.getElementById("image")
+    let price =
+    Number(document.getElementById("price").value)
 
     if(name === "" || stock <= 0 || price <= 0){
 
@@ -276,69 +266,39 @@ function addProduct(){
         p => p.name.toLowerCase() === name.toLowerCase()
     )
 
-    function saveProduct(imageData){
+    if(existingProduct){
 
-        if(existingProduct){
+        existingProduct.stock += stock
+        existingProduct.price = price
 
-            existingProduct.stock =
-            Number(existingProduct.stock) + Number(stock)
-
-            existingProduct.price = price
-
-            if(imageData !== ""){
-                existingProduct.image = imageData
-            }
-
-            alert("เติมสต๊อกสินค้าเรียบร้อย")
-
-        }else{
-
-            let product = {
-                name:name,
-                category:category,
-                stock: Number(stock),
-                price: Number(price),
-                sold:0,
-                revenue:0,
-                image:imageData
-            }
-
-            products.push(product)
-
-            alert("เพิ่มสินค้าใหม่แล้ว")
-        }
-
-        saveData()
-
-        renderProducts()
-
-        document.getElementById("name").value = ""
-        document.getElementById("stock").value = ""
-        document.getElementById("price").value = ""
-        document.getElementById("image").value = ""
-    }
-
-    if(imageInput.files[0]){
-
-        let reader = new FileReader()
-
-        reader.onload = function(e){
-
-            saveProduct(e.target.result)
-        }
-
-        reader.readAsDataURL(imageInput.files[0])
+        alert("เติมสต๊อกสินค้าเรียบร้อย")
 
     }else{
 
-        saveProduct("")
+        products.push({
+            name,
+            category,
+            stock,
+            price,
+            sold:0,
+            revenue:0
+        })
+
+        alert("เพิ่มสินค้าใหม่แล้ว")
     }
+
+    saveData()
+
+    renderProducts()
+
+    document.getElementById("name").value = ""
+    document.getElementById("stock").value = ""
+    document.getElementById("price").value = ""
 }
 
 function increaseStock(index){
 
-    products[index].stock =
-    Number(products[index].stock) + 1
+    products[index].stock++
 
     saveData()
 
@@ -347,10 +307,9 @@ function increaseStock(index){
 
 function decreaseStock(index){
 
-    if(Number(products[index].stock) > 0){
+    if(products[index].stock > 0){
 
-        products[index].stock =
-        Number(products[index].stock) - 1
+        products[index].stock--
 
         saveData()
 
@@ -360,14 +319,6 @@ function decreaseStock(index){
 
 function sellProduct(index,paymentType){
 
-    let confirmSale = confirm(
-    `ขาย "${products[index].name}" ใช่หรือไม่?`
-)
-
-if(!confirmSale){
-    return
-}
-
     if(products[index].stock <= 0){
 
         alert("สินค้าหมด")
@@ -375,40 +326,28 @@ if(!confirmSale){
         return
     }
 
-    products[index].stock =
-    Number(products[index].stock) - 1
-
-    products[index].sold =
-    Number(products[index].sold) + 1
-
-    products[index].revenue =
-    Number(products[index].revenue)
-    + Number(products[index].price)
+    products[index].stock--
+    products[index].sold++
+    products[index].revenue += products[index].price
 
     totalSales += products[index].price
-
     totalItems++
 
     if(paymentType === "cash"){
-
         cashSales += products[index].price
-
     }else{
-
         transferSales += products[index].price
     }
 
     let now = new Date()
 
-    let sale = {
+    salesHistory.unshift({
         product: products[index].name,
         price: products[index].price,
         payment: paymentType,
         date: now.toLocaleDateString(),
         time: now.toLocaleTimeString()
-    }
-
-    salesHistory.unshift(sale)
+    })
 
     saveData()
 
@@ -421,37 +360,22 @@ if(!confirmSale){
 
 function updateSummary(){
 
-    document.getElementById("totalSales").innerText = totalSales
+    document.getElementById("totalSales").innerText =
+    totalSales
 
-    document.getElementById("cashSales").innerText = cashSales
+    document.getElementById("cashSales").innerText =
+    cashSales
 
-    document.getElementById("transferSales").innerText = transferSales
+    document.getElementById("transferSales").innerText =
+    transferSales
 
-    document.getElementById("totalItems").innerText = totalItems
-}
-
-function editPrice(index){
-
-    let newPrice = prompt(
-        "ใส่ราคาใหม่",
-        products[index].price
-    )
-
-    if(newPrice !== null && newPrice !== ""){
-
-        products[index].price = Number(newPrice)
-
-        saveData()
-
-        renderProducts()
-    }
+    document.getElementById("totalItems").innerText =
+    totalItems
 }
 
 function deleteProduct(index){
 
-    let confirmDelete = confirm("ลบสินค้านี้ใช่ไหม?")
-
-    if(confirmDelete){
+    if(confirm("ลบสินค้านี้ใช่ไหม?")){
 
         products.splice(index,1)
 
@@ -464,85 +388,81 @@ function deleteProduct(index){
 function renderProducts(){
 
     let search =
-document.getElementById("searchInput")?.value.toLowerCase() || ""
+    document.getElementById("searchInput")
+    .value.toLowerCase()
 
     let html = ""
 
     let categories = [
-    ...new Set(
-        products
-        .filter(p => p.category)
-        .map(p => p.category)
-    )
-]
+        ...new Set(products.map(p => p.category))
+    ]
 
     categories.forEach(category => {
 
         html += `
-        <h2 class="category-title">${category}</h2>
-
+        <h2>${category}</h2>
         <div class="product-grid">
         `
 
         products.forEach((product,index)=>{
 
             if(
-    product.category === category &&
-    (product.name || "")
-        .toLowerCase()
-        .includes(search)
-){
+                product.category === category &&
+                product.name.toLowerCase().includes(search)
+            ){
 
                 html += `
                 <div class="card">
 
-                    ${product.image ? `
-                    <img src="${product.image}" class="product-image">
-                    ` : ""}
+                <h3>${product.name}</h3>
 
-                    <h3>${product.name}</h3>
+                <p class="${
+                    product.stock <= 3
+                    ? 'stock-low'
+                    : ''
+                }">
 
-                    <p class="${product.stock <= 3 ? 'stock-low' : ''}">
-                        คงเหลือ ${product.stock} ชิ้น
-                    </p>
+                คงเหลือ ${product.stock} ชิ้น
 
-                    <p>ราคา ${product.price} บาท
-                    </p>
+                </p>
 
-                    <button onclick="editPrice(${index})">
-                        ✏️ แก้ราคา
-                    </button>
-                    
-                    <div style="margin-bottom:10px;">
+                <p>ราคา ${product.price} บาท</p>
 
-                    <button onclick="decreaseStock(${index})">
-                        ➖
-                    </button>
+                <button onclick="decreaseStock(${index})">
+                ➖
+                </button>
 
-                    <button onclick="increaseStock(${index})">
-                        ➕
-                    </button>
+                <button onclick="increaseStock(${index})">
+                ➕
+                </button>
 
-                    </div>
+                <p>ขายแล้ว ${product.sold} ชิ้น</p>
 
-                    <p>ขายแล้ว ${product.sold} ชิ้น</p>
+                <p>รายได้ ${product.revenue} บาท</p>
 
-                    <p>รายได้ ${product.revenue} บาท</p>
+                <button
+                class="cash-btn"
+                onclick="sellProduct(${index},'cash')">
 
-                    <button class="cash-btn"
-                        onclick="sellProduct(${index}, 'cash')">
-                        💵 เงินสด
-                    </button>
+                💵 เงินสด
 
-                    <button class="transfer-btn"
-                        onclick="sellProduct(${index}, 'transfer')">
-                        📱 เงินโอน
-                    </button>
+                </button>
 
-                    <button class="delete-btn"
-                        onclick="deleteProduct(${index})">
-                        🗑️ ลบ
-                    </button>
+                <button
+                class="transfer-btn"
+                onclick="sellProduct(${index},'transfer')">
+
+                📱 เงินโอน
+
+                </button>
+
+                <button
+                class="delete-btn"
+                onclick="deleteProduct(${index})">
+
+                🗑️ ลบ
+
+                </button>
 
                 </div>
                 `
@@ -553,94 +473,35 @@ document.getElementById("searchInput")?.value.toLowerCase() || ""
         html += `</div>`
     })
 
-    document.getElementById("productList").innerHTML = html
-}
-    function deleteSale(index){
-
-    let confirmDelete = confirm(
-        "ลบรายการขายนี้ใช่ไหม?"
-    )
-
-    if(!confirmDelete){
-        return
-    }
-
-    let sale = salesHistory[index]
-
-    let product = products.find(
-        p => p.name === sale.product
-    )
-
-    if(product){
-
-        product.stock =
-        Number(product.stock) + 1
-
-        product.sold =
-        Number(product.sold) - 1
-
-        product.revenue =
-        Number(product.revenue) - Number(sale.price)
-    }
-
-    totalSales =
-    Number(totalSales) - Number(sale.price)
-
-    totalItems =
-    Number(totalItems) - 1
-
-    if(sale.payment === "cash"){
-
-        cashSales =
-        Number(cashSales) - Number(sale.price)
-    }
-
-    if(sale.payment === "transfer"){
-
-        transferSales =
-        Number(transferSales) - Number(sale.price)
-    }
-
-    salesHistory.splice(index,1)
-
-    saveData()
-
-    updateSummary()
-
-    renderProducts()
-
-    renderSalesHistory()
+    document.getElementById("productList").innerHTML =
+    html
 }
 
 function renderSalesHistory(){
 
     let html = ""
 
-    salesHistory.forEach((sale,index) => {
+    salesHistory.forEach(sale => {
 
         html += `
         <div class="sale-history">
 
-            <strong>${sale.product}</strong><br>
+        <strong>${sale.product}</strong><br>
 
-            ราคา ${sale.price} บาท<br>
+        ราคา ${sale.price} บาท<br>
 
-            ชำระ: ${sale.payment}<br>
+        ${sale.payment}<br>
 
-            วันที่: ${sale.date}<br>
-        
-            เวลา: ${sale.time}<br>
+        ${sale.date}<br>
 
-            <button class="delete-btn"
-            onclick="deleteSale(${index})">
-            🗑️ ลบรายการนี้
-    </button>
+        ${sale.time}
 
-</div>
+        </div>
         `
     })
 
-    document.getElementById("salesHistory").innerHTML = html
+    document.getElementById("salesHistory").innerHTML =
+    html
 }
 
 function exportCSV(){
@@ -650,54 +511,117 @@ function exportCSV(){
 
     products.forEach(product => {
 
-        csv += `${product.name},${product.category},${product.stock},${product.price},${product.sold},${product.revenue}\n`
-    })
+        csv +=
+`${product.name},${product.category},${product.stock},${product.price},${product.sold},${product.revenue}\n`
 
-    csv += `\n`
-
-    csv += `สินค้า,ราคา,การชำระเงิน,วันที่,เวลา\n`
-
-    salesHistory.forEach(sale => {
-
-        csv += `${sale.product},${sale.price},${sale.payment},${sale.date},${sale.time}\n`
     })
 
     let blob = new Blob(
         [csv],
-        { type: 'text/csv;charset=utf-8;' }
+        {type:'text/csv'}
     )
 
-    let link = document.createElement("a")
+    let link =
+    document.createElement("a")
 
-    link.href = URL.createObjectURL(blob)
+    link.href =
+    URL.createObjectURL(blob)
 
-    link.download = "stock-report.csv"
+    link.download =
+    "stock-report.csv"
 
     link.click()
 }
 
-function clearSalesHistory(){
+function exportBackup(){
 
-    let confirmClear = confirm(
-        "ล้างประวัติการขายทั้งหมดใช่ไหม?"
+    let backupData = {
+        products,
+        salesHistory,
+        totalSales,
+        cashSales,
+        transferSales,
+        totalItems
+    }
+
+    let blob = new Blob(
+        [JSON.stringify(backupData)],
+        {type:"application/json"}
     )
 
-    if(confirmClear){
+    let link =
+    document.createElement("a")
+
+    link.href =
+    URL.createObjectURL(blob)
+
+    link.download =
+    "stock-backup.json"
+
+    link.click()
+
+    alert("Backup สำเร็จ")
+}
+
+async function importBackup(){
+
+    try{
+
+        let file =
+        document.getElementById("importFile")
+        .files[0]
+
+        if(!file){
+
+            alert("กรุณาเลือกไฟล์")
+
+            return
+        }
+
+        let text = await file.text()
+
+        let data = JSON.parse(text)
+
+        products = data.products || []
+        salesHistory = data.salesHistory || []
+
+        totalSales = data.totalSales || 0
+        cashSales = data.cashSales || 0
+        transferSales = data.transferSales || 0
+        totalItems = data.totalItems || 0
+
+        saveData()
+
+        updateSummary()
+
+        renderProducts()
+
+        renderSalesHistory()
+
+        alert("Import สำเร็จ")
+
+    }catch(error){
+
+        console.log(error)
+
+        alert("Import ไม่สำเร็จ")
+    }
+}
+
+function clearSalesHistory(){
+
+    if(confirm("ล้างประวัติการขายทั้งหมดใช่ไหม?")){
 
         salesHistory = []
 
         totalSales = 0
-
         cashSales = 0
-
         transferSales = 0
-
         totalItems = 0
 
         products.forEach(product => {
 
             product.sold = 0
-
             product.revenue = 0
         })
 
@@ -708,124 +632,16 @@ function clearSalesHistory(){
         renderProducts()
 
         renderSalesHistory()
-
-        alert("ล้างประวัติการขายแล้ว")
     }
 }
 
 function resetData(){
 
-    let confirmReset = confirm("ล้างข้อมูลทั้งหมดใช่ไหม?")
-
-    if(confirmReset){
+    if(confirm("ล้างข้อมูลทั้งหมดใช่ไหม?")){
 
         localStorage.clear()
 
         location.reload()
-    }
-}
-
-    products = products.map(product => {
-
-    return {
-
-        name: product.name || "ไม่มีชื่อ",
-
-        category: product.category || "อื่นๆ",
-
-        stock: Number(product.stock || 0),
-
-        price: Number(product.price || 0),
-
-        sold: Number(product.sold || 0),
-
-        revenue: Number(product.revenue || 0),
-
-        image: product.image || ""
-    }
-})
-
-
-saveData()
-
-
-</script>
-
-<script>
-
-if("serviceWorker" in navigator){
-
-    navigator.serviceWorker.register("service-worker.js")
-}
-    
-async function importBackup(){
-
-    try{
-
-        let fileInput =
-        document.getElementById("importFile")
-
-        if(!fileInput.files.length){
-
-            alert("กรุณาเลือกไฟล์ Backup")
-
-            return
-        }
-
-        let file = fileInput.files[0]
-
-        let text =
-        await file.text()
-
-        if(!text){
-
-            alert("ไฟล์ว่าง")
-
-            return
-        }
-
-        let data =
-        JSON.parse(text)
-
-        products =
-        Array.isArray(data.products)
-        ? data.products
-        : []
-
-        salesHistory =
-        Array.isArray(data.salesHistory)
-        ? data.salesHistory
-        : []
-
-        totalSales =
-        Number(data.totalSales || 0)
-
-        cashSales =
-        Number(data.cashSales || 0)
-
-        transferSales =
-        Number(data.transferSales || 0)
-
-        totalItems =
-        Number(data.totalItems || 0)
-
-        saveData()
-
-        updateSummary()
-
-        renderProducts()
-
-        renderSalesHistory()
-
-        alert("กู้ข้อมูลสำเร็จ 🎉")
-
-    }catch(error){
-
-        console.log(error)
-
-        alert(
-            "Import ไม่สำเร็จ หรือไฟล์เสีย"
-        )
     }
 }
 
