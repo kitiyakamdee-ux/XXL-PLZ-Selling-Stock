@@ -9,12 +9,12 @@
 <style>
 
 body{
-    font-family: Arial;
+    font-family:Arial;
     background:#f4f4f4;
     padding:20px;
 }
 
-h1{
+h1,h2{
     color:#333;
 }
 
@@ -26,7 +26,7 @@ h1{
     margin-bottom:20px;
 }
 
-input, select{
+input,select,button{
     width:100%;
     padding:12px;
     margin-top:8px;
@@ -38,18 +38,13 @@ input, select{
 }
 
 button{
-    padding:12px;
     border:none;
-    border-radius:8px;
     color:white;
     cursor:pointer;
-    margin-top:5px;
-    font-size:15px;
 }
 
 .add-btn{
     background:#007AFF;
-    width:100%;
 }
 
 .cash-btn{
@@ -64,6 +59,10 @@ button{
     background:red;
 }
 
+.edit-btn{
+    background:#FF9500;
+}
+
 .export-btn{
     background:green;
 }
@@ -72,10 +71,27 @@ button{
     background:gray;
 }
 
-.product-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:15px;
+.sort-btn{
+    background:#5856D6;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+    background:white;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+    font-size:14px;
+}
+
+th{
+    background:#007AFF;
+    color:white;
 }
 
 .stock-low{
@@ -86,6 +102,23 @@ button{
 .sale-history{
     border-bottom:1px solid #ddd;
     padding:10px 0;
+}
+
+.sort-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+@media(max-width:700px){
+
+    table{
+        font-size:12px;
+    }
+
+    th,td{
+        padding:6px;
+    }
 }
 
 </style>
@@ -102,15 +135,15 @@ button{
 <input type="text" id="name" placeholder="ชื่อสินค้า">
 
 <select id="category">
-    <option>Punch Needle Keychain</option>
-    <option>Punch Needle Rug Mug</option>
-    <option>Punch Needle Hair Clip</option>
-    <option>Punch Needle Magnet</option>
-    <option>Beading</option>
-    <option>Tote Bag</option>
-    <option>Cable tie</option>
-    <option>Shoes Accessories</option>
-    <option>Hair Accessories</option>
+<option>Punch Needle Keychain</option>
+<option>Punch Needle Rug Mug</option>
+<option>Punch Needle Hair Clip</option>
+<option>Punch Needle Magnet</option>
+<option>Beading</option>
+<option>Tote Bag</option>
+<option>Cable tie</option>
+<option>Shoes Accessories</option>
+<option>Hair Accessories</option>
 </select>
 
 <input type="number" id="stock" placeholder="จำนวน">
@@ -163,7 +196,7 @@ Import Backup
 
 <div class="card">
 
-<h2>🔍 ค้นหาสินค้า</h2>
+<h2>🔍 ค้นหา / จัดเรียงสินค้า</h2>
 
 <input
 type="text"
@@ -172,9 +205,57 @@ placeholder="ค้นหาสินค้า..."
 onkeyup="renderProducts()"
 >
 
+<div class="sort-grid">
+
+<button class="sort-btn" onclick="sortProducts('name')">
+เรียง A-Z
+</button>
+
+<button class="sort-btn" onclick="sortProducts('date')">
+วันที่เพิ่มล่าสุด
+</button>
+
+<button class="sort-btn" onclick="sortProducts('price')">
+เรียงตามราคา
+</button>
+
+<button class="sort-btn" onclick="sortProducts('stock')">
+เรียงตามสต๊อก
+</button>
+
 </div>
 
-<div id="productList"></div>
+</div>
+
+<div class="card">
+
+<h2>📋 รายการสินค้า</h2>
+
+<div style="overflow-x:auto;">
+
+<table>
+
+<thead>
+
+<tr>
+<th>สินค้า</th>
+<th>หมวดหมู่</th>
+<th>สต๊อก</th>
+<th>ราคา</th>
+<th>ขายแล้ว</th>
+<th>รายได้</th>
+<th>จัดการ</th>
+</tr>
+
+</thead>
+
+<tbody id="productTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
 
 <div class="card">
 
@@ -271,11 +352,13 @@ function addProduct(){
         existingProduct.stock += stock
         existingProduct.price = price
 
-        alert("เติมสต๊อกสินค้าเรียบร้อย")
+        alert("เติมสต๊อกสินค้าแล้ว")
 
     }else{
 
         products.push({
+            id:Date.now(),
+            createdAt:Date.now(),
             name,
             category,
             stock,
@@ -294,6 +377,122 @@ function addProduct(){
     document.getElementById("name").value = ""
     document.getElementById("stock").value = ""
     document.getElementById("price").value = ""
+}
+
+function renderProducts(){
+
+    let search =
+    document.getElementById("searchInput")
+    .value.toLowerCase()
+
+    let html = ""
+
+    products.forEach((product,index)=>{
+
+        if(
+            product.name.toLowerCase()
+            .includes(search)
+        ){
+
+            html += `
+            <tr>
+
+            <td>${product.name}</td>
+
+            <td>${product.category}</td>
+
+            <td class="${
+                product.stock <= 3
+                ? 'stock-low'
+                : ''
+            }">
+
+            ${product.stock}
+
+            </td>
+
+            <td>${product.price}</td>
+
+            <td>${product.sold}</td>
+
+            <td>${product.revenue}</td>
+
+            <td>
+
+            <button
+            class="edit-btn"
+            onclick="editProductName(${index})">
+
+            ✏️
+
+            </button>
+
+            <button
+            onclick="decreaseStock(${index})">
+
+            ➖
+
+            </button>
+
+            <button
+            onclick="increaseStock(${index})">
+
+            ➕
+
+            </button>
+
+            <button
+            class="cash-btn"
+            onclick="sellProduct(${index},'cash')">
+
+            💵
+
+            </button>
+
+            <button
+            class="transfer-btn"
+            onclick="sellProduct(${index},'transfer')">
+
+            📱
+
+            </button>
+
+            <button
+            class="delete-btn"
+            onclick="deleteProduct(${index})">
+
+            🗑️
+
+            </button>
+
+            </td>
+
+            </tr>
+            `
+        }
+
+    })
+
+    document.getElementById("productTable").innerHTML =
+    html
+}
+
+function editProductName(index){
+
+    let newName = prompt(
+        "เปลี่ยนชื่อสินค้า",
+        products[index].name
+    )
+
+    if(newName && newName.trim() !== ""){
+
+        products[index].name =
+        newName.trim()
+
+        saveData()
+
+        renderProducts()
+    }
 }
 
 function increaseStock(index){
@@ -328,25 +527,36 @@ function sellProduct(index,paymentType){
 
     products[index].stock--
     products[index].sold++
-    products[index].revenue += products[index].price
+
+    products[index].revenue +=
+    products[index].price
 
     totalSales += products[index].price
     totalItems++
 
     if(paymentType === "cash"){
+
         cashSales += products[index].price
+
     }else{
+
         transferSales += products[index].price
     }
 
     let now = new Date()
 
     salesHistory.unshift({
-        product: products[index].name,
-        price: products[index].price,
-        payment: paymentType,
-        date: now.toLocaleDateString(),
-        time: now.toLocaleTimeString()
+
+        product:products[index].name,
+
+        price:products[index].price,
+
+        payment:paymentType,
+
+        date:now.toLocaleDateString(),
+
+        time:now.toLocaleTimeString()
+
     })
 
     saveData()
@@ -385,96 +595,39 @@ function deleteProduct(index){
     }
 }
 
-function renderProducts(){
+function sortProducts(type){
 
-    let search =
-    document.getElementById("searchInput")
-    .value.toLowerCase()
+    if(type === "name"){
 
-    let html = ""
+        products.sort((a,b)=>
+            a.name.localeCompare(b.name)
+        )
+    }
 
-    let categories = [
-        ...new Set(products.map(p => p.category))
-    ]
+    if(type === "date"){
 
-    categories.forEach(category => {
+        products.sort((a,b)=>
+            b.createdAt - a.createdAt
+        )
+    }
 
-        html += `
-        <h2>${category}</h2>
-        <div class="product-grid">
-        `
+    if(type === "price"){
 
-        products.forEach((product,index)=>{
+        products.sort((a,b)=>
+            b.price - a.price
+        )
+    }
 
-            if(
-                product.category === category &&
-                product.name.toLowerCase().includes(search)
-            ){
+    if(type === "stock"){
 
-                html += `
-                <div class="card">
+        products.sort((a,b)=>
+            b.stock - a.stock
+        )
+    }
 
-                <h3>${product.name}</h3>
+    saveData()
 
-                <p class="${
-                    product.stock <= 3
-                    ? 'stock-low'
-                    : ''
-                }">
-
-                คงเหลือ ${product.stock} ชิ้น
-
-                </p>
-
-                <p>ราคา ${product.price} บาท</p>
-
-                <button onclick="decreaseStock(${index})">
-                ➖
-                </button>
-
-                <button onclick="increaseStock(${index})">
-                ➕
-                </button>
-
-                <p>ขายแล้ว ${product.sold} ชิ้น</p>
-
-                <p>รายได้ ${product.revenue} บาท</p>
-
-                <button
-                class="cash-btn"
-                onclick="sellProduct(${index},'cash')">
-
-                💵 เงินสด
-
-                </button>
-
-                <button
-                class="transfer-btn"
-                onclick="sellProduct(${index},'transfer')">
-
-                📱 เงินโอน
-
-                </button>
-
-                <button
-                class="delete-btn"
-                onclick="deleteProduct(${index})">
-
-                🗑️ ลบ
-
-                </button>
-
-                </div>
-                `
-            }
-
-        })
-
-        html += `</div>`
-    })
-
-    document.getElementById("productList").innerHTML =
-    html
+    renderProducts()
 }
 
 function renderSalesHistory(){
@@ -536,6 +689,7 @@ function exportCSV(){
 function exportBackup(){
 
     let backupData = {
+
         products,
         salesHistory,
         totalSales,
@@ -583,11 +737,15 @@ async function importBackup(){
         let data = JSON.parse(text)
 
         products = data.products || []
+
         salesHistory = data.salesHistory || []
 
         totalSales = data.totalSales || 0
+
         cashSales = data.cashSales || 0
+
         transferSales = data.transferSales || 0
+
         totalItems = data.totalItems || 0
 
         saveData()
