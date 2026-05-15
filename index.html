@@ -470,8 +470,7 @@ function renderProducts(){
 
             <button
             class="icon-btn"
-            onclick="changeCategory(${index})"
-            >
+            onclick="changeCategory(${index})">
             🗂️
             </button>
 
@@ -483,8 +482,7 @@ function renderProducts(){
 
             <button
             class="icon-btn"
-            onclick="editName(${index})"
-            >
+            onclick="editProductName(${index})">
             ✏️
             </button>
 
@@ -499,17 +497,15 @@ function renderProducts(){
             ${product.stock}
 
             <button
+            class="stock-btn"
             onclick="decreaseStock(${index})">
-
             ➖
-
             </button>
 
             <button
+            class="stock-btn"
             onclick="increaseStock(${index})">
-
             ➕
-
             </button>
 
             </td>
@@ -520,8 +516,7 @@ function renderProducts(){
 
             <button
             class="icon-btn"
-            onclick="editPrice(${index})"
-            >
+            onclick="editPrice(${index})">
             💰
             </button>
 
