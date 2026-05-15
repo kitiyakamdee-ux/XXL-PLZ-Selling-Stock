@@ -764,7 +764,7 @@ if(!confirmSell){
 
     renderProducts()
 
-    renderSalesHistory()"
+    renderSalesHistory()
         
 }
 
@@ -800,9 +800,7 @@ function updateSummary(){
     .innerText = totalItems
 }
 
-function renderSalesHistory(){
-
-    function deleteSale(index){
+function deleteSale(index){
 
     let sale = salesHistory[index]
 
@@ -856,9 +854,11 @@ function renderSalesHistory(){
     renderSalesHistory()
 }
 
+function renderSalesHistory(){
+
     let html = ""
 
-    salesHistory.forEach(sale => {
+    salesHistory.forEach((sale,index) => {
 
         html += `
         <div class="sale-history">
