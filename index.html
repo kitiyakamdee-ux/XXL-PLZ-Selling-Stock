@@ -140,6 +140,15 @@ th{
     th,td{
         padding:6px;
     }
+    .icon-btn,
+    .stock-btn{
+
+        width:auto;
+        padding:4px 8px;
+        margin-left:5px;
+        margin-top:5px;
+        font-size:14px;
+    }
 }
 
 </style>
@@ -339,6 +348,13 @@ function saveData(){
     )
 }
 
+function getProductById(id){
+
+    return products.find(
+        product => product.id === id
+    )
+}
+
 function addProduct(){
 
     let name =
@@ -456,11 +472,6 @@ function renderProducts(){
 
         categoryProducts.forEach(product => {
 
-            let index =
-            products.findIndex(
-                p => p.id === product.id
-            )
-
             html += `
             <tr>
 
@@ -470,7 +481,7 @@ function renderProducts(){
 
             <button
             class="icon-btn"
-            onclick="changeCategory(${index})">
+            onclick="changeCategory(${product.id})">
             🗂️
             </button>
 
@@ -482,7 +493,7 @@ function renderProducts(){
 
             <button
             class="icon-btn"
-            onclick="editProductName(${index})">
+            onclick="editProductName(${product.id})">
             ✏️
             </button>
 
@@ -498,13 +509,13 @@ function renderProducts(){
 
             <button
             class="stock-btn"
-            onclick="decreaseStock(${index})">
+            onclick="decreaseStock(${product.id})">
             ➖
             </button>
 
             <button
             class="stock-btn"
-            onclick="increaseStock(${index})">
+            onclick="increaseStock(${product.id})">
             ➕
             </button>
 
@@ -516,7 +527,7 @@ function renderProducts(){
 
             <button
             class="icon-btn"
-            onclick="editPrice(${index})">
+            onclick="editPrice(${product.id})">
             💰
             </button>
 
@@ -534,7 +545,7 @@ function renderProducts(){
 
             <button
             class="cash-btn"
-            onclick="sellProduct(${index},'cash')">
+            onclick="sellProduct(${product.id},'cash')">
 
             💵 เงินสด
 
@@ -542,7 +553,7 @@ function renderProducts(){
 
             <button
             class="transfer-btn"
-            onclick="sellProduct(${index},'transfer')">
+            onclick="sellProduct(${product.id},'transfer')">
 
             📱 เงินโอน
 
@@ -550,7 +561,7 @@ function renderProducts(){
 
             <button
             class="delete-btn"
-            onclick="deleteProduct(${index})">
+            onclick="deleteProduct(${product.id})">
 
             🗑️ ลบสินค้า
 
@@ -575,16 +586,18 @@ function renderProducts(){
     html
 }
 
-function editProductName(index){
+function editProductName(id){
+
+    let product = getProductById(id)
 
     let newName = prompt(
         "แก้ชื่อสินค้า",
-        products[index].name
+        product.name
     )
 
     if(newName && newName.trim() !== ""){
 
-        products[index].name =
+        product.name =
         newName.trim()
 
         saveData()
@@ -593,16 +606,18 @@ function editProductName(index){
     }
 }
 
-function editPrice(index){
+function editPrice(id){
+
+    let product = getProductById(id)
 
     let newPrice = prompt(
         "แก้ราคาสินค้า",
-        products[index].price
+        product.price
     )
 
     if(newPrice){
 
-        products[index].price =
+        product.price =
         Number(newPrice)
 
         saveData()
@@ -611,7 +626,9 @@ function editPrice(index){
     }
 }
 
-function changeCategory(index){
+function changeCategory(id){
+
+    let product = getProductById(id)
 
     let newCategory = prompt(
 `ใส่ชื่อหมวดใหม่
@@ -625,12 +642,12 @@ Tote Bag
 Cable tie
 Shoes Accessories
 Hair Accessories`,
-        products[index].category
+        product.category
     )
 
     if(newCategory){
 
-        products[index].category =
+        product.category =
         newCategory.trim()
 
         saveData()
@@ -639,20 +656,24 @@ Hair Accessories`,
     }
 }
 
-function increaseStock(index){
+function increaseStock(id){
 
-    products[index].stock++
+    let product = getProductById(id)
+
+    product.stock++
 
     saveData()
 
     renderProducts()
 }
 
-function decreaseStock(index){
+function decreaseStock(id){
 
-    if(products[index].stock > 0){
+    let product = getProductById(id)
 
-        products[index].stock--
+    if(product.stock > 0){
+
+        product.stock--
 
         saveData()
 
@@ -660,36 +681,38 @@ function decreaseStock(index){
     }
 }
 
-function sellProduct(index,paymentType){
+function sellProduct(id,paymentType){
 
-    if(products[index].stock <= 0){
+    let product = getProductById(id)
+
+    if(product.stock <= 0){
 
         alert("สินค้าหมด")
 
         return
     }
 
-    products[index].stock--
+    product.stock--
 
-    products[index].sold++
+    product.sold++
 
-    products[index].revenue +=
-    products[index].price
+    product.revenue +=
+    product.price
 
     totalSales +=
-    products[index].price
+    product.price
 
     totalItems++
 
     if(paymentType === "cash"){
 
         cashSales +=
-        products[index].price
+        product.price
 
     }else{
 
         transferSales +=
-        products[index].price
+        product.price
     }
 
     let now = new Date()
@@ -697,13 +720,13 @@ function sellProduct(index,paymentType){
     salesHistory.unshift({
 
         product:
-        products[index].name,
+        product.name,
 
         category:
-        products[index].category,
+        product.category,
 
         price:
-        products[index].price,
+        product.price,
 
         payment:
         paymentType === "cash"
@@ -727,7 +750,12 @@ function sellProduct(index,paymentType){
     renderSalesHistory()
 }
 
-function deleteProduct(index){
+function deleteProduct(id){
+
+    let index =
+    products.findIndex(
+        p => p.id === id
+    )
 
     if(confirm("ลบสินค้านี้ใช่ไหม?")){
 
