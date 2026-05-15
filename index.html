@@ -684,6 +684,23 @@ function decreaseStock(id){
 function sellProduct(id,paymentType){
 
     let product = getProductById(id)
+    let confirmSell = confirm(
+
+`ยืนยันการขายสินค้า?
+
+สินค้า: ${product.name}
+ราคา: ${product.price} บาท
+ชำระ: ${
+paymentType === "cash"
+? "เงินสด"
+: "เงินโอน"
+}`
+
+)
+
+if(!confirmSell){
+    return
+}
 
     if(product.stock <= 0){
 
@@ -747,7 +764,8 @@ function sellProduct(id,paymentType){
 
     renderProducts()
 
-    renderSalesHistory()
+    renderSalesHistory()"
+        
 }
 
 function deleteProduct(id){
@@ -784,6 +802,60 @@ function updateSummary(){
 
 function renderSalesHistory(){
 
+    function deleteSale(index){
+
+    let sale = salesHistory[index]
+
+    let confirmDelete = confirm(
+
+`ลบรายการขายนี้?
+
+สินค้า: ${sale.product}
+ราคา: ${sale.price} บาท`
+
+    )
+
+    if(!confirmDelete){
+        return
+    }
+
+    let product = products.find(
+        p => p.name === sale.product
+    )
+
+    if(product){
+
+        product.stock++
+
+        product.sold--
+
+        product.revenue -= sale.price
+    }
+
+    totalSales -= sale.price
+
+    totalItems--
+
+    if(sale.payment === "เงินสด"){
+
+        cashSales -= sale.price
+
+    }else{
+
+        transferSales -= sale.price
+    }
+
+    salesHistory.splice(index,1)
+
+    saveData()
+
+    updateSummary()
+
+    renderProducts()
+
+    renderSalesHistory()
+}
+
     let html = ""
 
     salesHistory.forEach(sale => {
@@ -807,6 +879,15 @@ function renderSalesHistory(){
 
         เวลา:
         ${sale.time}
+        <br><br>
+
+<button
+class="delete-btn"
+onclick="deleteSale(${index})">
+
+ลบรายการนี้
+
+</button>
 
         </div>
         `
@@ -879,7 +960,7 @@ function exportCSV(){
     csv +=
 `สินค้า,หมวดหมู่,ราคา,การชำระเงิน,วันที่,เวลา\n`
 
-    salesHistory.forEach(sale => {
+    salesHistory.forEach((sale,index) => {
 
         csv +=
 `${sale.product},${sale.category},${sale.price},${sale.payment},${sale.date},${sale.time}\n`
