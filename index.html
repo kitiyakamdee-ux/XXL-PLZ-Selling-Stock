@@ -439,8 +439,8 @@ function renderProducts(){
 
         <tr>
 
-        <th>สินค้า</th>
         <th>หมวดหมู่</th>
+        <th>สินค้า</th>
         <th>สต๊อก</th>
         <th>ราคา</th>
         <th>ขายแล้ว</th>
@@ -466,28 +466,33 @@ function renderProducts(){
 
             <td>
 
-            <b>${product.name}</b>
+            ${product.category}
 
             <button
-            class="edit-btn action-btn"
-            onclick="editProductName(${index})">
-
-            แก้ชื่อสินค้า
-
+            class="icon-btn"
+            onclick="changeCategory(${index})"
+            >
+            🗂️
             </button>
 
             </td>
 
             <td>
 
-            ${product.category}
+            ${product.name}
 
             <button
-            class="edit-btn action-btn"
-            onclick="changeCategory(${index})">
+            class="icon-btn"
+            onclick="editName(${index})"
+            >
+            ✏️
+            </button>
 
-            เปลี่ยนหมวดสินค้า
-
+            <button
+            class="icon-btn"
+            onclick="editPrice(${index})"
+            >
+            💰
             </button>
 
             </td>
