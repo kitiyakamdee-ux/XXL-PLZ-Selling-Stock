@@ -152,6 +152,32 @@ th{
     }
 }
 
+    .modal{
+
+    display:none;
+    position:fixed;
+    z-index:999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.4);
+
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    width:90%;
+    max-width:350px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.2);
+}
+    
 </style>
 </head>
 
@@ -309,6 +335,8 @@ Number(localStorage.getItem("transferSales")) || 0
 
 let totalItems =
 Number(localStorage.getItem("totalItems")) || 0
+    
+let currentCategoryProductId = null
 
 updateSummary()
 renderProducts()
@@ -612,43 +640,58 @@ function editPrice(id){
 
 function changeCategory(id){
 
+    currentCategoryProductId = id
+
     let product = getProductById(id)
 
-    let options = ""
+    let select =
+    document.getElementById("categorySelect")
+
+    select.innerHTML = ""
 
     categoryOrder.forEach(category => {
 
-        options += `
-        <option value="${category}"
-        ${category === product.category ? "selected" : ""}>
-        ${category}
-        </option>
-        `
+        let option =
+        document.createElement("option")
+
+        option.value = category
+
+        option.textContent = category
+
+        if(category === product.category){
+
+            option.selected = true
+        }
+
+        select.appendChild(option)
     })
 
-    let newCategory = prompt(
-`เลือกหมวดใหม่จากรายการนี้:
+    document.getElementById("categoryModal")
+    .style.display = "flex"
+}
 
-${categoryOrder.join("\n")}`,
-product.category
-    )
+function closeCategoryModal(){
 
-    if(!newCategory){
-        return
-    }
+    document.getElementById("categoryModal")
+    .style.display = "none"
+}
 
-    if(!categoryOrder.includes(newCategory)){
+function saveCategoryChange(){
 
-        alert("ไม่มีหมวดนี้")
+    let product =
+    getProductById(currentCategoryProductId)
 
-        return
-    }
+    let newCategory =
+    document.getElementById("categorySelect")
+    .value
 
     product.category = newCategory
 
     saveData()
 
     renderProducts()
+
+    closeCategoryModal()
 }
 
 function increaseStock(id){
@@ -1034,5 +1077,25 @@ function resetData(){
 
 </script>
 
+    <div id="categoryModal" class="modal">
+
+<div class="modal-content">
+
+<h3>เปลี่ยนหมวดสินค้า</h3>
+
+<select id="categorySelect"></select>
+
+<button class="add-btn" onclick="saveCategoryChange()">
+บันทึก
+</button>
+
+<button class="reset-btn" onclick="closeCategoryModal()">
+ยกเลิก
+</button>
+
+</div>
+
+</div>
+    
 </body>
 </html>
