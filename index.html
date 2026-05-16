@@ -614,14 +614,23 @@ function changeCategory(id){
 
     let product = getProductById(id)
 
-    let newCategory = prompt(
+    let options = ""
 
-`เลือกหมวดใหม่
+    categoryOrder.forEach(category => {
+
+        options += `
+        <option value="${category}"
+        ${category === product.category ? "selected" : ""}>
+        ${category}
+        </option>
+        `
+    })
+
+    let newCategory = prompt(
+`เลือกหมวดใหม่จากรายการนี้:
 
 ${categoryOrder.join("\n")}`,
-
-    product.category
-
+product.category
     )
 
     if(!newCategory){
@@ -631,12 +640,14 @@ ${categoryOrder.join("\n")}`,
     if(!categoryOrder.includes(newCategory)){
 
         alert("ไม่มีหมวดนี้")
+
         return
     }
 
     product.category = newCategory
 
     saveData()
+
     renderProducts()
 }
 
