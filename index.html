@@ -126,7 +126,17 @@ th{
     margin-bottom:6px;
 }
 
-@media(max-width:900px){
+    .icon-btn,
+    .stock-btn{
+
+        width:auto;
+        padding:4px 8px;
+        margin-left:5px;
+        margin-top:5px;
+        font-size:14px;
+    }
+    
+    @media(max-width:900px){
 
     .top-grid,
     .second-grid{
@@ -139,15 +149,6 @@ th{
 
     th,td{
         padding:6px;
-    }
-    .icon-btn,
-    .stock-btn{
-
-        width:auto;
-        padding:4px 8px;
-        margin-left:5px;
-        margin-top:5px;
-        font-size:14px;
     }
 }
 
@@ -630,61 +631,37 @@ function changeCategory(id){
 
     let product = getProductById(id)
 
-    let options = categoryOrder.map(category => {
+    let categoryList = categoryOrder.join("\n")
 
-        return `
-        <option value="${category}"
-        ${
-            category === product.category
-            ? "selected"
-            : ""
-        }>
-        ${category}
-        </option>
-        `
+    let newCategory = prompt(
 
-    }).join("")
+`เลือกหมวดสินค้าใหม่
 
-    let selectHTML = `
-    <select id="newCategorySelect">
-        ${options}
-    </select>
-    `
+${categoryList}
 
-    let popup = window.open(
-        "",
-        "",
-        "width=400,height=250"
+พิมพ์ชื่อหมวดให้ตรง`,
+
+    product.category
+
     )
 
-    popup.document.write(`
-
-    <html>
-
-    <head>
-
-    <title>เปลี่ยนหมวดสินค้า</title>
-
-    <style>
-
-    body{
-        font-family:Arial;
-        padding:20px;
+    if(!newCategory){
+        return
     }
 
-    select,button{
-        width:100%;
-        padding:10px;
-        margin-top:10px;
-        font-size:16px;
+    if(!categoryOrder.includes(newCategory)){
+
+        alert("ไม่มีหมวดนี้")
+
+        return
     }
 
-    button{
-        background:#007AFF;
-        color:white;
-        border:none;
-        border-radius:8px;
-    }
+    product.category = newCategory
+
+    saveData()
+
+    renderProducts()
+}
 
     </style>
 
@@ -724,17 +701,6 @@ function changeCategory(id){
     </html>
 
     `)
-}
-
-function updateCategory(id,newCategory){
-
-    let product = getProductById(id)
-
-    product.category = newCategory
-
-    saveData()
-
-    renderProducts()
 }
 
 function increaseStock(id){
