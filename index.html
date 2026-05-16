@@ -322,6 +322,34 @@ onkeyup="renderProducts()"
 
 </div>
 
+.category-nav{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.category-link-btn{
+    width:auto;
+    padding:8px 14px;
+    border:none;
+    border-radius:999px;
+    background:#ffffff;
+    color:#333;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+    transition:0.2s;
+}
+
+.category-link-btn:hover{
+    background:#007AFF;
+    color:white;
+}
+    
+<div class="category-nav" id="categoryNav"></div>
+    
 <div id="productTables"></div>
 
 <div class="card" style="margin-top:20px;">
@@ -387,6 +415,44 @@ Number(localStorage.getItem("totalItems")) || 0
 let currentCategoryProductId = null
 
 updateSummary()
+
+    function renderCategoryNav(){
+
+    let html = ""
+
+    categoryOrder.forEach(category => {
+
+        html += `
+        <button
+        class="category-link-btn"
+        onclick="scrollToCategory('${category}')">
+
+        ${category}
+
+        </button>
+        `
+    })
+
+    document.getElementById("categoryNav").innerHTML = html
+}
+
+function scrollToCategory(category){
+
+    let target =
+    document.getElementById(
+        "category-" + category
+    )
+
+    if(target){
+
+        target.scrollIntoView({
+
+            behavior:"smooth",
+            block:"start"
+        })
+    }
+}
+    
 renderProducts()
 renderSalesHistory()
 
@@ -513,9 +579,14 @@ function renderProducts(){
         }
 
         html += `
-        <h2 class="group-title">
+        <h2
+        class="group-title"
+        id="category-${category}">
+
         ${category}
+
         </h2>
+        `
 
         <div style="overflow-x:auto;">
 
@@ -831,9 +902,10 @@ paymentType === "cash"
     saveData()
 
     updateSummary()
+    renderCategoryNav()
     renderProducts()
     renderSalesHistory()
-}
+    }
 
 function deleteProduct(id){
 
