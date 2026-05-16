@@ -415,6 +415,11 @@ Number(localStorage.getItem("totalItems")) || 0
 
 let currentCategoryProductId = null
 
+    updateSummary()
+
+renderCategoryNav()
+renderProducts()
+renderSalesHistory()
 updateSummary()
 
     function renderCategoryNav(){
@@ -548,6 +553,8 @@ function addProduct(){
     }
 
     saveData()
+
+    renderCategoryNav()
     renderProducts()
 
     document.getElementById("name").value = ""
@@ -743,8 +750,10 @@ function editProductName(id){
 
         product.name = newName.trim()
 
-        saveData()
-        renderProducts()
+    saveData()
+
+    renderCategoryNav()
+    renderProducts()
     }
 }
 
