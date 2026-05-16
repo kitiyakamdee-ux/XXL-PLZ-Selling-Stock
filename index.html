@@ -630,30 +630,111 @@ function changeCategory(id){
 
     let product = getProductById(id)
 
-    let newCategory = prompt(
-`ใส่ชื่อหมวดใหม่
+    let options = categoryOrder.map(category => {
 
-Punch Needle Keychain
-Punch Needle Rug Mug
-Punch Needle Hair Clip
-Punch Needle Magnet
-Beading
-Tote Bag
-Cable tie
-Shoes Accessories
-Hair Accessories`,
-        product.category
+        return `
+        <option value="${category}"
+        ${
+            category === product.category
+            ? "selected"
+            : ""
+        }>
+        ${category}
+        </option>
+        `
+
+    }).join("")
+
+    let selectHTML = `
+    <select id="newCategorySelect">
+        ${options}
+    </select>
+    `
+
+    let popup = window.open(
+        "",
+        "",
+        "width=400,height=250"
     )
 
-    if(newCategory){
+    popup.document.write(`
 
-        product.category =
-        newCategory.trim()
+    <html>
 
-        saveData()
+    <head>
 
-        renderProducts()
+    <title>เปลี่ยนหมวดสินค้า</title>
+
+    <style>
+
+    body{
+        font-family:Arial;
+        padding:20px;
     }
+
+    select,button{
+        width:100%;
+        padding:10px;
+        margin-top:10px;
+        font-size:16px;
+    }
+
+    button{
+        background:#007AFF;
+        color:white;
+        border:none;
+        border-radius:8px;
+    }
+
+    </style>
+
+    </head>
+
+    <body>
+
+    <h3>เปลี่ยนหมวดสินค้า</h3>
+
+    ${selectHTML}
+
+    <button onclick="saveCategory()">
+    บันทึก
+    </button>
+
+    <script>
+
+    function saveCategory(){
+
+        let category =
+        document.getElementById(
+        'newCategorySelect'
+        ).value
+
+        window.opener.updateCategory(
+            ${id},
+            category
+        )
+
+        window.close()
+    }
+
+    </script>
+
+    </body>
+
+    </html>
+
+    `)
+}
+
+function updateCategory(id,newCategory){
+
+    let product = getProductById(id)
+
+    product.category = newCategory
+
+    saveData()
+
+    renderProducts()
 }
 
 function increaseStock(id){
