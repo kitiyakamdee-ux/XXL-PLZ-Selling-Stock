@@ -281,7 +281,6 @@ onkeyup="renderProducts()"
 <script>
 
 const categoryOrder = [
-
 "Punch Needle Keychain",
 "Punch Needle Rug Mug",
 "Punch Needle Hair Clip",
@@ -291,7 +290,6 @@ const categoryOrder = [
 "Cable tie",
 "Shoes Accessories",
 "Hair Accessories"
-
 ]
 
 let products =
@@ -373,7 +371,6 @@ function addProduct(){
     if(name === "" || stock <= 0 || price <= 0){
 
         alert("กรอกข้อมูลให้ครบ")
-
         return
     }
 
@@ -393,7 +390,6 @@ function addProduct(){
         products.push({
 
             id:Date.now(),
-
             createdAt:Date.now(),
 
             name,
@@ -403,14 +399,12 @@ function addProduct(){
 
             sold:0,
             revenue:0
-
         })
 
         alert("เพิ่มสินค้าใหม่แล้ว")
     }
 
     saveData()
-
     renderProducts()
 
     document.getElementById("name").value = ""
@@ -436,7 +430,6 @@ function renderProducts(){
             product.name
             .toLowerCase()
             .includes(search)
-
         )
 
         if(categoryProducts.length === 0){
@@ -534,13 +527,9 @@ function renderProducts(){
 
             </td>
 
-            <td>
-            ${product.sold}
-            </td>
+            <td>${product.sold}</td>
 
-            <td>
-            ${product.revenue}
-            </td>
+            <td>${product.revenue}</td>
 
             <td>
 
@@ -576,9 +565,7 @@ function renderProducts(){
 
         html += `
         </tbody>
-
         </table>
-
         </div>
         `
     })
@@ -598,11 +585,9 @@ function editProductName(id){
 
     if(newName && newName.trim() !== ""){
 
-        product.name =
-        newName.trim()
+        product.name = newName.trim()
 
         saveData()
-
         renderProducts()
     }
 }
@@ -618,11 +603,9 @@ function editPrice(id){
 
     if(newPrice){
 
-        product.price =
-        Number(newPrice)
+        product.price = Number(newPrice)
 
         saveData()
-
         renderProducts()
     }
 }
@@ -631,15 +614,11 @@ function changeCategory(id){
 
     let product = getProductById(id)
 
-    let categoryList = categoryOrder.join("\n")
-
     let newCategory = prompt(
 
-`เลือกหมวดสินค้าใหม่
+`เลือกหมวดใหม่
 
-${categoryList}
-
-พิมพ์ชื่อหมวดให้ตรง`,
+${categoryOrder.join("\n")}`,
 
     product.category
 
@@ -652,55 +631,13 @@ ${categoryList}
     if(!categoryOrder.includes(newCategory)){
 
         alert("ไม่มีหมวดนี้")
-
         return
     }
 
     product.category = newCategory
 
     saveData()
-
     renderProducts()
-}
-
-    </style>
-
-    </head>
-
-    <body>
-
-    <h3>เปลี่ยนหมวดสินค้า</h3>
-
-    ${selectHTML}
-
-    <button onclick="saveCategory()">
-    บันทึก
-    </button>
-
-    <script>
-
-    function saveCategory(){
-
-        let category =
-        document.getElementById(
-        'newCategorySelect'
-        ).value
-
-        window.opener.updateCategory(
-            ${id},
-            category
-        )
-
-        window.close()
-    }
-
-    </script>
-
-    </body>
-
-    </html>
-
-    `)
 }
 
 function increaseStock(id){
@@ -710,7 +647,6 @@ function increaseStock(id){
     product.stock++
 
     saveData()
-
     renderProducts()
 }
 
@@ -723,7 +659,6 @@ function decreaseStock(id){
         product.stock--
 
         saveData()
-
         renderProducts()
     }
 }
@@ -731,6 +666,7 @@ function decreaseStock(id){
 function sellProduct(id,paymentType){
 
     let product = getProductById(id)
+
     let confirmSell = confirm(
 
 `ยืนยันการขายสินค้า?
@@ -741,78 +677,52 @@ function sellProduct(id,paymentType){
 paymentType === "cash"
 ? "เงินสด"
 : "เงินโอน"
-}`
+}`)
 
-)
-
-if(!confirmSell){
-    return
-}
+    if(!confirmSell){
+        return
+    }
 
     if(product.stock <= 0){
 
         alert("สินค้าหมด")
-
         return
     }
 
     product.stock--
-
     product.sold++
+    product.revenue += product.price
 
-    product.revenue +=
-    product.price
-
-    totalSales +=
-    product.price
-
+    totalSales += product.price
     totalItems++
 
     if(paymentType === "cash"){
-
-        cashSales +=
-        product.price
-
+        cashSales += product.price
     }else{
-
-        transferSales +=
-        product.price
+        transferSales += product.price
     }
 
     let now = new Date()
 
     salesHistory.unshift({
 
-        product:
-        product.name,
-
-        category:
-        product.category,
-
-        price:
-        product.price,
+        product:product.name,
+        category:product.category,
+        price:product.price,
 
         payment:
         paymentType === "cash"
         ? "เงินสด"
         : "เงินโอน",
 
-        date:
-        now.toLocaleDateString(),
-
-        time:
-        now.toLocaleTimeString()
-
+        date:now.toLocaleDateString(),
+        time:now.toLocaleTimeString()
     })
 
     saveData()
-
     updateSummary()
-
     renderProducts()
-
     renderSalesHistory()
-        
 }
 
 function deleteProduct(id){
@@ -827,7 +737,6 @@ function deleteProduct(id){
         products.splice(index,1)
 
         saveData()
-
         renderProducts()
     }
 }
@@ -857,8 +766,7 @@ function deleteSale(index){
 
 สินค้า: ${sale.product}
 ราคา: ${sale.price} บาท`
-
-    )
+)
 
     if(!confirmDelete){
         return
@@ -871,33 +779,24 @@ function deleteSale(index){
     if(product){
 
         product.stock++
-
         product.sold--
-
         product.revenue -= sale.price
     }
 
     totalSales -= sale.price
-
     totalItems--
 
     if(sale.payment === "เงินสด"){
-
         cashSales -= sale.price
-
     }else{
-
         transferSales -= sale.price
     }
 
     salesHistory.splice(index,1)
 
     saveData()
-
     updateSummary()
-
     renderProducts()
-
     renderSalesHistory()
 }
 
@@ -912,29 +811,25 @@ function renderSalesHistory(){
 
         <b>${sale.product}</b><br>
 
-        หมวด:
-        ${sale.category}<br>
+        หมวด: ${sale.category}<br>
 
-        ราคา:
-        ${sale.price} บาท<br>
+        ราคา: ${sale.price} บาท<br>
 
-        ชำระ:
-        ${sale.payment}<br>
+        ชำระ: ${sale.payment}<br>
 
-        วันที่:
-        ${sale.date}<br>
+        วันที่: ${sale.date}<br>
 
-        เวลา:
-        ${sale.time}
+        เวลา: ${sale.time}
+
         <br><br>
 
-<button
-class="delete-btn"
-onclick="deleteSale(${index})">
+        <button
+        class="delete-btn"
+        onclick="deleteSale(${index})">
 
-ลบรายการนี้
+        ลบรายการนี้
 
-</button>
+        </button>
 
         </div>
         `
@@ -949,44 +844,32 @@ function sortProducts(type){
     if(type === "name"){
 
         products.sort((a,b)=>
-
-            a.name.localeCompare(
-                b.name,
-                'th'
-            )
-
+            a.name.localeCompare(b.name,'th')
         )
     }
 
     if(type === "date"){
 
         products.sort((a,b)=>
-
             b.createdAt - a.createdAt
-
         )
     }
 
     if(type === "price"){
 
         products.sort((a,b)=>
-
             b.price - a.price
-
         )
     }
 
     if(type === "stock"){
 
         products.sort((a,b)=>
-
             b.stock - a.stock
-
         )
     }
 
     renderProducts()
-
     saveData()
 }
 
@@ -999,7 +882,6 @@ function exportCSV(){
 
         csv +=
 `${product.name},${product.category},${product.stock},${product.price},${product.sold},${product.revenue}\n`
-
     })
 
     csv += `\n`
@@ -1007,11 +889,10 @@ function exportCSV(){
     csv +=
 `สินค้า,หมวดหมู่,ราคา,การชำระเงิน,วันที่,เวลา\n`
 
-    salesHistory.forEach((sale,index) => {
+    salesHistory.forEach(sale => {
 
         csv +=
 `${sale.product},${sale.category},${sale.price},${sale.payment},${sale.date},${sale.time}\n`
-
     })
 
     let blob = new Blob(
@@ -1041,7 +922,6 @@ function exportBackup(){
         cashSales,
         transferSales,
         totalItems
-
     }
 
     let blob = new Blob(
@@ -1049,7 +929,6 @@ function exportBackup(){
         [JSON.stringify(backupData)],
 
         {type:"application/json"}
-
     )
 
     let link =
@@ -1077,40 +956,25 @@ async function importBackup(){
         if(!file){
 
             alert("กรุณาเลือกไฟล์")
-
             return
         }
 
-        let text =
-        await file.text()
+        let text = await file.text()
 
-        let data =
-        JSON.parse(text)
+        let data = JSON.parse(text)
 
-        products =
-        data.products || []
+        products = data.products || []
+        salesHistory = data.salesHistory || []
 
-        salesHistory =
-        data.salesHistory || []
-
-        totalSales =
-        data.totalSales || 0
-
-        cashSales =
-        data.cashSales || 0
-
-        transferSales =
-        data.transferSales || 0
-
-        totalItems =
-        data.totalItems || 0
+        totalSales = data.totalSales || 0
+        cashSales = data.cashSales || 0
+        transferSales = data.transferSales || 0
+        totalItems = data.totalItems || 0
 
         saveData()
 
         updateSummary()
-
         renderProducts()
-
         renderSalesHistory()
 
         alert("Import สำเร็จ")
@@ -1130,27 +994,20 @@ function clearSalesHistory(){
         salesHistory = []
 
         totalSales = 0
-
         cashSales = 0
-
         transferSales = 0
-
         totalItems = 0
 
         products.forEach(product => {
 
             product.sold = 0
-
             product.revenue = 0
-
         })
 
         saveData()
 
         updateSummary()
-
         renderProducts()
-
         renderSalesHistory()
     }
 }
@@ -1160,7 +1017,6 @@ function resetData(){
     if(confirm("ล้างข้อมูลทั้งหมดใช่ไหม?")){
 
         localStorage.clear()
-
         location.reload()
     }
 }
